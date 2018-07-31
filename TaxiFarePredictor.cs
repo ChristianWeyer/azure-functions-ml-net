@@ -32,6 +32,16 @@ namespace Serverless
         {
             log.Info("C# HTTP trigger TaxiFarePredictor function processed a request.");
 
+            if (typeof(Microsoft.ML.Runtime.Data.LoadTransform) == null ||
+                typeof(Microsoft.ML.Runtime.Learners.LinearClassificationTrainer) == null ||
+                typeof(Microsoft.ML.Runtime.Internal.CpuMath.SseUtils) == null ||
+                typeof(Microsoft.ML.Runtime.FastTree.FastTree) == null)
+            {
+                log.Error("Error loading ML.NET");
+
+                return new StatusCodeResult(500);
+            }
+
             PredictionModel<TaxiTrip, TaxiTripFarePrediction> model = await Train();
             TaxiTripFarePrediction prediction = model.Predict(trip);
 
